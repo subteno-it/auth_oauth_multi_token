@@ -31,8 +31,7 @@ class ResUsers(models.Model):
             oauth_uid = validation['user_id']
             user_ids = self.search([("oauth_uid", "=", oauth_uid), ('oauth_provider_id', '=', provider)]).ids
             if user_ids:
-                token_ids = self.env['auth.oauth.multi.token']
-                token_ids.create({'user_id':user_ids[0],
+                self.oauth_access_token_ids.create({'user_id':user_ids[0],
                                     'oauth_access_token': params['access_token']})
         except:
             pass

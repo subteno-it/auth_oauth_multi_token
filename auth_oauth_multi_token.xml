@@ -12,7 +12,8 @@
                             <field name="oauth_access_token_ids" nolabel="1">
                               <tree limit="10">
                                   <field name="id"/>
-                                  <field name="oauth_access_token" />
+                                  <field name="oauth_access_token"/>
+                                  <field name="create_date"/>
                               </tree>
                             </field>
                         </group>
