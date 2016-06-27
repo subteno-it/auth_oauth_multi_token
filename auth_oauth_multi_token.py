@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 # Florent de Labarre - 2016
 
-
 import openerp
 from openerp import api, fields, models, _
 from openerp.addons.auth_signup.res_users import SignupError
 
 class auth_oauth_multi_token(models.Model):
-    """Class defining the configuration values of an OAuth2 provider"""
+    """Class defining list of tokens"""
 
     _name = 'auth.oauth.multi.token'
     _description = 'OAuth2 token'
@@ -28,8 +27,10 @@ class ResUsers(models.Model):
         try:
             oauth_uid = validation['user_id']
             user_ids = self.search([("oauth_uid", "=", oauth_uid), ('oauth_provider_id', '=', provider)]).ids
-            if user_ids:
-                self.oauth_access_token_ids.create({'user_id':user_ids[0],
+            if not user_ids:
+                raise openerp.exceptions.AccessDenied()
+            assert len(user_ids) == 1
+            self.oauth_access_token_ids.create({'user_id':user_ids[0],
                                     'oauth_access_token': params['access_token']})
         except:
             pass
