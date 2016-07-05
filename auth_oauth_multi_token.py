@@ -30,8 +30,17 @@ class ResUsers(models.Model):
             if not user_ids:
                 raise openerp.exceptions.AccessDenied()
             assert len(user_ids) == 1
+
             self.oauth_access_token_ids.create({'user_id':user_ids[0],
-                                    'oauth_access_token': params['access_token']})
+                                        'oauth_access_token': params['access_token']})
+
+            #limit number of token
+            i = 0
+            for token in oauth_access_token_ids:
+                i += 1
+                if i > 10:
+                    token.unlink()
+
         except:
             pass
         return res
