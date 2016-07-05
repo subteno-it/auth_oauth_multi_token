@@ -14,11 +14,15 @@
                     <group string="Last tokens">
                         <field name="oauth_access_token_ids" nolabel="1">
                             <tree limit="10">
-                                <field name="id"/>
+                                <field name="id" invisible="1"/>
                                 <field name="create_date"/>
                                 <field name="oauth_access_token"/>
+                                <field name="active_token"/>
                             </tree>
                         </field>
+                    </group>
+                    <group>
+                        <button string="Clear Tokens" type="object" name="clear_token" class="oe_highlight"/>
                     </group>
                 </xpath>
             </field>
