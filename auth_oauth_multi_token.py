@@ -53,7 +53,6 @@ class ResUsers(models.Model):
         return res
 
     @api.multi
-    @api.depends('oauth_access_max_token')
     def clear_token(self):
         for users in self:
             for token in users.oauth_access_token_ids:
