@@ -5,6 +5,7 @@ import openerp
 from openerp import api, fields, models, _
 from openerp.addons.auth_signup.res_users import SignupError
 
+
 class auth_oauth_multi_token(models.Model):
     """Class defining list of tokens"""
 
@@ -14,12 +15,14 @@ class auth_oauth_multi_token(models.Model):
 
     oauth_access_token = fields.Char('OAuth Access Token', readonly=True, copy=False)
     user_id = fields.Many2one('res.users', 'User', required=True)
+    active = fields.Boolean('Active')
 
 
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
     oauth_access_token_ids = fields.One2many('auth.oauth.multi.token', 'user_id', 'Work Centers', copy=True)
+    oauth_access_max_token = fields.Integer('Number of simultaneous connection', default=5, required=True)
 
     @api.model
     def _auth_oauth_signin(self, provider, validation, params):
@@ -31,15 +34,14 @@ class ResUsers(models.Model):
                 raise openerp.exceptions.AccessDenied()
             assert len(user_ids) == 1
 
-            self.oauth_access_token_ids.create({'user_id':user_ids[0],
-                                        'oauth_access_token': params['access_token']})
-
-            #limit number of token
-            i = 0
-            for token in oauth_access_token_ids:
-                i += 1
-                if i > 10:
-                    token.unlink()
+            self.oauth_access_token_ids.create({'user_id': user_ids[0],
+                                                'oauth_access_token': params['access_token'],
+                                                'active': true,
+                                                })
+            self.oauth_access_token_ids.browse(self.oauth_access_token_ids.ids[self.oauth_access_max_token]).write({
+                'oauth_access_token': "*********",
+                'active': False,
+            })
 
         except:
             pass
@@ -51,8 +53,9 @@ class ResUsers(models.Model):
             return super(ResUsers, self).check_credentials(password)
         except openerp.exceptions.AccessDenied:
             res = self.env['auth.oauth.multi.token'].sudo().search([
-                                ('user_id', '=', self.env.uid),
-                                ('oauth_access_token', '=', password)],
-                                                        )
+                ('user_id', '=', self.env.uid),
+                ('oauth_access_token', '=', password)],
+                ('active', '=', True),
+            )
             if not res:
                 raise

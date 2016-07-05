@@ -7,16 +7,19 @@
             <field name="type">form</field>
             <field name="inherit_id" ref="auth_oauth.view_users_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='oauth_uid']" position="after">
+                    <field name="oauth_access_max_token"/>
+                </xpath>
                 <xpath expr="//page[2]/group[1]" position="after">
-                        <group string="Last tokens">
-                            <field name="oauth_access_token_ids" nolabel="1">
-                              <tree limit="10">
-                                  <field name="id"/>
-                                  <field name="oauth_access_token"/>
-                                  <field name="create_date"/>
-                              </tree>
-                            </field>
-                        </group>
+                    <group string="Last tokens">
+                        <field name="oauth_access_token_ids" nolabel="1">
+                            <tree limit="10">
+                                <field name="id"/>
+                                <field name="create_date"/>
+                                <field name="oauth_access_token"/>
+                            </tree>
+                        </field>
+                    </group>
                 </xpath>
             </field>
         </record>
