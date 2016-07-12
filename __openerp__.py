@@ -11,7 +11,7 @@
     'website': 'www.iguana-yachts.com',
     'depends': ['auth_oauth'],
     'data': [
-        'auth_oauth_multi_token.xml',
+        'views/res_users.xml',
         'security/ir.model.access.csv',
     ],
     'demo': [],
